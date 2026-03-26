@@ -1,0 +1,4 @@
+faiss-cpu
+sentence-transformers
+tqdm
+huggingface-hub<1.0

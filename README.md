@@ -45,8 +45,17 @@ End-to-end flow:
    - Each record includes: `chunk_id`, `character`, `source_file`, `chunk_index`, `start_char`, `end_char`, `text`, and `doc_meta` (the frontmatter metadata from the source character file).
 3. **Metadata** — Attach structured fields (e.g. character name, source file, section, optional tags) to each chunk.
    - In this repo, the chunk JSON already contains `doc_meta` extracted from the character frontmatter.
-4. **Embeddings** — Encode chunks with a chosen embedding model.
-5. **Vector store** — Store vectors and metadata in **FAISS** (e.g. index type chosen for recall/latency tradeoffs).
+4. **Embeddings** — Encode each chunk from `data/index/chunks.jsonl` with a chosen embedding model.
+   - Implemented by `scripts/build_index.py` (uses `src/rag/embeddings.py`).
+   - Default embedding model: `sentence-transformers/all-MiniLM-L6-v2` (configurable via `--embedding-model`).
+   - Requires Python deps (see `requirements.txt`), including `sentence-transformers` and `faiss-cpu`.
+   - Run: `python scripts/build_index.py`
+5. **Vector store** — Build and persist the **FAISS** index for retrieval.
+   - Implemented by `scripts/build_index.py` (uses `src/rag/faiss_index.py`).
+   - Outputs (under `data/index/`):
+     - `faiss.index` (FAISS index)
+     - `chunk_ids.json` (ordered list of chunk ids)
+     - `chunks_by_id.json` (chunk payload + metadata lookup by `chunk_id`)
 
 This repository is intended as a **reference implementation** of that pipeline; adjust models, chunk sizes, and FAISS index parameters to match your environment.
 
