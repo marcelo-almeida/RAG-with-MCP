@@ -17,3 +17,4 @@ Thumbs.db
 # Generated RAG artifacts (keep data/index/ in repo, not binary outputs)
 data/index/*
 !data/index/.gitkeep
+data/characters/

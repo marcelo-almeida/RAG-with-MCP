@@ -36,8 +36,15 @@ Generated artifacts under `data/index/` are excluded from version control via `.
 End-to-end flow:
 
 1. **Ingest text** — Load content from the per-character files.
-2. **Chunking** — Split text into overlapping or semantic chunks sized for the embedding model.
+   - Per-character source documents live in `data/characters/`.
+   - If the directory is empty, generate them first by running `python scripts/generate_character_files.py`.
+2. **Chunking** — Split text into overlapping chunks sized for the embedding model.
+   - Implemented by `scripts/build_chunks.py` using `src/rag/chunking.py`.
+   - Default parameters: `--chunk-size-words 200` and `--chunk-overlap-words 40`.
+   - Output: `data/index/chunks.jsonl` (one JSON record per chunk).
+   - Each record includes: `chunk_id`, `character`, `source_file`, `chunk_index`, `start_char`, `end_char`, `text`, and `doc_meta` (the frontmatter metadata from the source character file).
 3. **Metadata** — Attach structured fields (e.g. character name, source file, section, optional tags) to each chunk.
+   - In this repo, the chunk JSON already contains `doc_meta` extracted from the character frontmatter.
 4. **Embeddings** — Encode chunks with a chosen embedding model.
 5. **Vector store** — Store vectors and metadata in **FAISS** (e.g. index type chosen for recall/latency tradeoffs).
 
